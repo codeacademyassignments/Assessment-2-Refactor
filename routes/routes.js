@@ -1,4 +1,4 @@
 const ping = require('./ping');
-// const allBooksWithRating = require('./allBooksWithRating');
+const allBooksWithRating = require('./allBooksWithRating');
 
-module.exports = [ping];
+module.exports = [ping, allBooksWithRating];

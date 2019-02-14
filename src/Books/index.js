@@ -10,10 +10,29 @@ const promiseForGetRequest = url => new Promise(((resolve) => {
       result += data;
     });
     response.on('end', () => {
-      resolve(JSON.parse(result.toString()));
+      resolve(JSON.parse(result));
     });
   });
 }));
 
+const promiseForGetRatingOfBook = (book, url) => promiseForGetRequest(`${url}${book.id}`);
 
-module.exports = { promiseForGetRequest };
+const mergeRatingAndBook = (ratings, books) => {
+  const resultArray = [];
+  books.forEach((book, index) => {
+    resultArray.push(Object.assign({}, book, ratings[index]));
+  });
+  return resultArray;
+};
+
+const getBooksWithRating = (urlForBooks, urlForRating) => promiseForGetRequest(urlForBooks).then((allBooks) => {
+  const promiseForAllBooksRating = allBooks.books.map(book => promiseForGetRatingOfBook(book, urlForRating));
+  return Promise.all(promiseForAllBooksRating).then(allRatings => mergeRatingAndBook(allRatings, allBooks.books));
+});
+
+// getBooksWithRating(url1, url2).then(console.log);
+
+
+module.exports = {
+  promiseForGetRequest, getBooksWithRating, mergeRatingAndBook, promiseForGetRatingOfBook,
+};
