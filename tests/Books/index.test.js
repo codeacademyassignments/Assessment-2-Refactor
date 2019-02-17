@@ -1,5 +1,5 @@
 const {
-  promiseForGetRequest, getBooksWithRating, mergeRatingAndBook, promiseForGetRatingOfBook,
+  promiseForGetRequest, getBooksWithRating, mergeRatingAndBook, promiseForGetRatingOfBook, groupBooksByAuthor,
 } = require('../../src/Books');
 
 const url1 = 'https://5gj1qvkc5h.execute-api.us-east-1.amazonaws.com/dev/allBooks';
@@ -73,5 +73,64 @@ describe('promiseForGetRatingOfBook', () => {
   };
   it('should return promise which resolves to rating object', async () => {
     await expect(promiseForGetRatingOfBook(book, url2)).resolves.toEqual({ rating: 4.45 });
+  });
+});
+
+describe('groupBooksByAuthor', () => {
+  const booksWithRating = [{
+    Author: 'J K Rowling',
+    id: 10,
+    Name: 'Harry Potter and the Sorcerers Stone (Harry Potter, #1)',
+    rating: 4.45,
+  },
+  {
+    Author: 'J K Rowling',
+    id: 20,
+    Name: 'Harry Potter and the Chamber of Secrets (Harry Potter, #2)',
+    rating: 4.38,
+  },
+  {
+    Author: 'Sidney Sheldon',
+    id: 80,
+    Name: 'If Tomorrow Comes (Tracy Whitney Series, #1)',
+    rating: 4.02,
+  },
+  {
+    Author: 'Sidney Sheldon',
+    id: 100,
+    Name: 'Tell Me Your Dreams',
+    rating: 3.93,
+  }];
+
+  const booksGroupedByAuthor = {
+    'J K Rowling': [
+      {
+        Author: 'J K Rowling',
+        id: 10,
+        Name: 'Harry Potter and the Sorcerers Stone (Harry Potter, #1)',
+        rating: 4.45,
+      },
+      {
+        Author: 'J K Rowling',
+        id: 20,
+        Name: 'Harry Potter and the Chamber of Secrets (Harry Potter, #2)',
+        rating: 4.38,
+      }],
+    'Sidney Sheldon': [
+      {
+        Author: 'Sidney Sheldon',
+        id: 80,
+        Name: 'If Tomorrow Comes (Tracy Whitney Series, #1)',
+        rating: 4.02,
+      },
+      {
+        Author: 'Sidney Sheldon',
+        id: 100,
+        Name: 'Tell Me Your Dreams',
+        rating: 3.93,
+      }],
+  };
+  it('should group books by author names', () => {
+    expect(groupBooksByAuthor(booksWithRating)).toEqual(booksGroupedByAuthor);
   });
 });

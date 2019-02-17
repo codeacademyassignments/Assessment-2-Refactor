@@ -27,12 +27,24 @@ const mergeRatingAndBook = (ratings, books) => {
 
 const getBooksWithRating = (urlForBooks, urlForRating) => promiseForGetRequest(urlForBooks).then((allBooks) => {
   const promiseForAllBooksRating = allBooks.books.map(book => promiseForGetRatingOfBook(book, urlForRating));
-  return Promise.all(promiseForAllBooksRating).then(allRatings => mergeRatingAndBook(allRatings, allBooks.books));
+  return Promise.all(promiseForAllBooksRating).then(allRatings => mergeRatingAndBook(allRatings, allBooks.books),
+    // return groupBooksByAuthor(booksWithRatings);
+  );
 });
+
+const groupBooksByAuthor = booksWithRatings => booksWithRatings.reduce(
+  (accumulator, current) => {
+    if (accumulator[current.Author] === undefined) {
+      accumulator[current.Author] = [];
+    }
+    accumulator[current.Author].push(current);
+    return accumulator;
+  }, {},
+);
 
 // getBooksWithRating(url1, url2).then(console.log);
 
 
 module.exports = {
-  promiseForGetRequest, getBooksWithRating, mergeRatingAndBook, promiseForGetRatingOfBook,
+  promiseForGetRequest, getBooksWithRating, mergeRatingAndBook, promiseForGetRatingOfBook, groupBooksByAuthor,
 };
